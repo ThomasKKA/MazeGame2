@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Maze Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    canvas {
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="mazeCanvas" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('mazeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const cellSize = 20; // Size of each cell in the maze grid
+    const rows = 20;     // Number of rows in the maze
+    const cols = 20;     // Number of columns in the maze
+
+    // Representing the maze grid as a 2D array
+    const maze = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+  [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+  [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1],
+  [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+  [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+  [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
+// Rest of the code remains unchanged
+
+    const player = {
+      x: 1,
+      y: 1,
+      color: 'blue',
+    };
+
+    const exit = {
+      x: cols - 2,
+      y: rows - 2,
+      color: 'green',
+    };
+
+    function drawMaze() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the maze
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (maze[y][x] === 1) {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+          }
+        }
+      }
+
+      // Draw the player
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x * cellSize, player.y * cellSize, cellSize, cellSize);
+
+      // Draw the exit
+      ctx.fillStyle = exit.color;
+      ctx.fillRect(exit.x * cellSize, exit.y * cellSize, cellSize, cellSize);
+    }
+
+    function handleKeyPress(event) {
+      const key = event.key;
+
+      // Move the player based on the arrow key pressed
+      switch (key) {
+        case 'ArrowUp':
+          if (maze[player.y - 1][player.x] !== 1) {
+            player.y -= 1;
+          }
+          break;
+        case 'ArrowDown':
+          if (maze[player.y + 1][player.x] !== 1) {
+            player.y += 1;
+          }
+          break;
+        case 'ArrowLeft':
+          if (maze[player.y][player.x - 1] !== 1) {
+            player.x -= 1;
+          }
+          break;
+        case 'ArrowRight':
+          if (maze[player.y][player.x + 1] !== 1) {
+            player.x += 1;
+          }
+          break;
+      }
+
+      // Check if the player reached the exit
+      if (player.x === exit.x && player.y === exit.y) {
+        alert('Congratulations! You reached the exit!');
+        // Reset the player position after reaching the exit
+        player.x = 1;
+        player.y = 1;
+      }
+
+      drawMaze();
+    }
+
+    drawMaze();
+    document.addEventListener('keydown', handleKeyPress);
+  </script>
+</body>
+</html>
